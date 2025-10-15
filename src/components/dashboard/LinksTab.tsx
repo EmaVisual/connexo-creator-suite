@@ -1,31 +1,35 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, GripVertical, Trash2, ExternalLink } from "lucide-react";
+import { Plus, GripVertical, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useProfile, Link } from "@/contexts/ProfileContext";
+import { useToast } from "@/hooks/use-toast";
 import IconPicker from "./IconPicker";
 
-interface Link {
-  id: string;
-  title: string;
-  url: string;
-  icon: string;
-  isActive: boolean;
-}
-
 const LinksTab = () => {
-  const [links, setLinks] = useState<Link[]>([
-    { id: "1", title: "Instagram", url: "https://instagram.com", icon: "instagram", isActive: true },
-    { id: "2", title: "Website", url: "https://example.com", icon: "globe", isActive: true },
-  ]);
+  const { t } = useLanguage();
+  const { profile, updateLinks, updateContactData } = useProfile();
+  const { toast } = useToast();
 
-  const [contactData, setContactData] = useState({
-    email: "",
-    phone: "",
-    location: "",
-  });
+  useEffect(() => {
+    // Auto-save links when they change
+    const timer = setTimeout(() => {
+      updateLinks(profile.links);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [profile.links]);
+
+  useEffect(() => {
+    // Auto-save contact data when it changes
+    const timer = setTimeout(() => {
+      updateContactData(profile.contactData);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [profile.contactData]);
 
   const addLink = () => {
     const newLink: Link = {
@@ -35,24 +39,39 @@ const LinksTab = () => {
       icon: "link",
       isActive: true,
     };
-    setLinks([...links, newLink]);
+    const newLinks = [...profile.links, newLink];
+    updateLinks(newLinks);
+    toast({
+      title: t("common.success"),
+      description: "Link added",
+    });
   };
 
   const updateLink = (id: string, field: keyof Link, value: string | boolean) => {
-    setLinks(links.map(link => link.id === id ? { ...link, [field]: value } : link));
+    const newLinks = profile.links.map(link => link.id === id ? { ...link, [field]: value } : link);
+    updateLinks(newLinks);
   };
 
   const deleteLink = (id: string) => {
-    setLinks(links.filter(link => link.id !== id));
+    const newLinks = profile.links.filter(link => link.id !== id);
+    updateLinks(newLinks);
+    toast({
+      title: t("common.success"),
+      description: "Link deleted",
+    });
+  };
+
+  const handleContactChange = (field: keyof typeof profile.contactData, value: string) => {
+    updateContactData({ ...profile.contactData, [field]: value });
   };
 
   const downloadVCard = () => {
     const vcard = `BEGIN:VCARD
 VERSION:3.0
-FN:Connexo User
-EMAIL:${contactData.email}
-TEL:${contactData.phone}
-ADR:;;${contactData.location};;;;
+FN:${profile.appearance.title}
+EMAIL:${profile.contactData.email}
+TEL:${profile.contactData.phone}
+ADR:;;${profile.contactData.location};;;;
 END:VCARD`;
     
     const blob = new Blob([vcard], { type: 'text/vcard' });
@@ -64,65 +83,65 @@ END:VCARD`;
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
       {/* Contact Data Section */}
       <Card>
-        <CardHeader>
-          <CardTitle>Contact Information</CardTitle>
-          <CardDescription>Add your contact details to appear on your profile</CardDescription>
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl">{t("links.contactInfo")}</CardTitle>
+          <CardDescription className="text-sm">{t("links.contactDescription")}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("auth.email")}</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="your@email.com"
-                value={contactData.email}
-                onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
+                value={profile.contactData.email}
+                onChange={(e) => handleContactChange("email", e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">{t("links.phone")}</Label>
               <Input
                 id="phone"
                 type="tel"
                 placeholder="+1 234 567 8900"
-                value={contactData.phone}
-                onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
+                value={profile.contactData.phone}
+                onChange={(e) => handleContactChange("phone", e.target.value)}
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
+            <Label htmlFor="location">{t("links.location")}</Label>
             <Input
               id="location"
               placeholder="Caracas, Venezuela"
-              value={contactData.location}
-              onChange={(e) => setContactData({ ...contactData, location: e.target.value })}
+              value={profile.contactData.location}
+              onChange={(e) => handleContactChange("location", e.target.value)}
             />
           </div>
-          <Button onClick={downloadVCard} variant="secondary">
-            Download vCard
+          <Button onClick={downloadVCard} variant="secondary" className="w-full sm:w-auto">
+            {t("links.downloadVCard")}
           </Button>
         </CardContent>
       </Card>
 
       {/* Links Section */}
       <Card>
-        <CardHeader>
-          <CardTitle>Your Links</CardTitle>
-          <CardDescription>Add and manage your profile links</CardDescription>
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl">{t("links.yourLinks")}</CardTitle>
+          <CardDescription className="text-sm">{t("links.yourLinksDescription")}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {links.map((link) => (
-            <div key={link.id} className="flex items-start gap-3 p-4 bg-secondary rounded-lg">
-              <div className="cursor-move mt-3">
+        <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+          {profile.links.map((link) => (
+            <div key={link.id} className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-secondary rounded-lg">
+              <div className="cursor-move mt-3 hidden sm:block">
                 <GripVertical className="h-5 w-5 text-muted-foreground" />
               </div>
               
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
                 <div className="flex items-center gap-2">
                   <IconPicker
                     value={link.icon}
@@ -141,25 +160,27 @@ END:VCARD`;
                 />
               </div>
 
-              <div className="flex items-center gap-2 mt-3">
+              <div className="flex items-center gap-1 sm:gap-2 mt-3 flex-shrink-0">
                 <Switch
                   checked={link.isActive}
                   onCheckedChange={(checked) => updateLink(link.id, "isActive", checked)}
+                  className="scale-90 sm:scale-100"
                 />
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => deleteLink(link.id)}
+                  className="h-8 w-8 sm:h-10 sm:w-10"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             </div>
           ))}
 
-          <Button onClick={addLink} className="w-full">
+          <Button onClick={addLink} className="w-full text-sm sm:text-base py-2 sm:py-3">
             <Plus className="h-4 w-4 mr-2" />
-            Add Link
+            {t("links.addLink")}
           </Button>
         </CardContent>
       </Card>

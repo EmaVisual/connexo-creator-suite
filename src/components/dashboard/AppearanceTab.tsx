@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -6,49 +5,49 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useProfile } from "@/contexts/ProfileContext";
+import { useToast } from "@/hooks/use-toast";
 import PhonePreview from "./PhonePreview";
 
 const AppearanceTab = () => {
-  const [appearance, setAppearance] = useState({
-    profileImage: "",
-    coverImage: "",
-    title: "Your Name",
-    bio: "Creative professional and digital enthusiast",
-    bgType: "color",
-    bgColor: "#210900",
-    bgImage: "",
-    buttonStyle: "rounded",
-    buttonBgColor: "#ff6600",
-    buttonTextColor: "#ffffff",
-    buttonShadow: true,
-    fontFamily: "Space Grotesk",
-    textColor: "#ffffff",
-  });
+  const { t } = useLanguage();
+  const { profile, updateAppearance } = useProfile();
+  const { toast } = useToast();
+  const appearance = profile.appearance;
 
   const handleImageUpload = (field: "profileImage" | "coverImage", e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAppearance({ ...appearance, [field]: reader.result as string });
+        updateAppearance({ ...appearance, [field]: reader.result as string });
+        toast({
+          title: t("common.success"),
+          description: "Image uploaded",
+        });
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleAppearanceChange = (field: keyof typeof appearance, value: any) => {
+    updateAppearance({ ...appearance, [field]: value });
+  };
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 max-w-7xl mx-auto">
       {/* Editor Panel */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Profile Section */}
         <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-            <CardDescription>Customize your profile appearance</CardDescription>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">{t("appearance.profile")}</CardTitle>
+            <CardDescription className="text-sm">{t("appearance.profileDescription")}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             <div className="space-y-2">
-              <Label>Profile Picture</Label>
+              <Label>{t("appearance.profilePicture")}</Label>
               <div className="flex items-center gap-4">
                 {appearance.profileImage && (
                   <img src={appearance.profileImage} alt="Profile" className="h-16 w-16 rounded-full object-cover" />
@@ -56,7 +55,7 @@ const AppearanceTab = () => {
                 <Button variant="secondary" asChild>
                   <label className="cursor-pointer">
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload
+                    {t("appearance.upload")}
                     <input
                       type="file"
                       accept="image/*"
@@ -69,7 +68,7 @@ const AppearanceTab = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Cover Image</Label>
+              <Label>{t("appearance.coverImage")}</Label>
               <div className="flex items-center gap-4">
                 {appearance.coverImage && (
                   <img src={appearance.coverImage} alt="Cover" className="h-16 w-32 rounded object-cover" />
@@ -77,7 +76,7 @@ const AppearanceTab = () => {
                 <Button variant="secondary" asChild>
                   <label className="cursor-pointer">
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload
+                    {t("appearance.upload")}
                     <input
                       type="file"
                       accept="image/*"
@@ -90,20 +89,20 @@ const AppearanceTab = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{t("appearance.titleLabel")}</Label>
               <Input
                 id="title"
                 value={appearance.title}
-                onChange={(e) => setAppearance({ ...appearance, title: e.target.value })}
+                onChange={(e) => handleAppearanceChange("title", e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio">{t("appearance.bio")}</Label>
               <Textarea
                 id="bio"
                 value={appearance.bio}
-                onChange={(e) => setAppearance({ ...appearance, bio: e.target.value })}
+                onChange={(e) => handleAppearanceChange("bio", e.target.value)}
                 rows={3}
               />
             </div>
@@ -112,47 +111,47 @@ const AppearanceTab = () => {
 
         {/* Background Section */}
         <Card>
-          <CardHeader>
-            <CardTitle>Background</CardTitle>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">{t("appearance.background")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             <div className="space-y-2">
-              <Label htmlFor="bgType">Type</Label>
-              <Select value={appearance.bgType} onValueChange={(value) => setAppearance({ ...appearance, bgType: value })}>
+              <Label htmlFor="bgType">{t("appearance.backgroundType")}</Label>
+              <Select value={appearance.bgType} onValueChange={(value) => handleAppearanceChange("bgType", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="color">Solid Color</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
+                  <SelectItem value="color">{t("appearance.solidColor")}</SelectItem>
+                  <SelectItem value="image">{t("appearance.image")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {appearance.bgType === "color" ? (
               <div className="space-y-2">
-                <Label htmlFor="bgColor">Color</Label>
+                <Label htmlFor="bgColor">{t("appearance.color")}</Label>
                 <div className="flex gap-2">
                   <Input
                     id="bgColor"
                     type="color"
                     value={appearance.bgColor}
-                    onChange={(e) => setAppearance({ ...appearance, bgColor: e.target.value })}
+                    onChange={(e) => handleAppearanceChange("bgColor", e.target.value)}
                     className="h-10 w-20"
                   />
                   <Input
                     value={appearance.bgColor}
-                    onChange={(e) => setAppearance({ ...appearance, bgColor: e.target.value })}
+                    onChange={(e) => handleAppearanceChange("bgColor", e.target.value)}
                   />
                 </div>
               </div>
             ) : (
               <div className="space-y-2">
-                <Label>Background Image</Label>
+                <Label>{t("appearance.backgroundImage")}</Label>
                 <Button variant="secondary" asChild className="w-full">
                   <label className="cursor-pointer">
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload Image
+                    {t("appearance.uploadImage")}
                     <input type="file" accept="image/*" className="hidden" />
                   </label>
                 </Button>
@@ -163,40 +162,40 @@ const AppearanceTab = () => {
 
         {/* Button Styles */}
         <Card>
-          <CardHeader>
-            <CardTitle>Button Style</CardTitle>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">{t("appearance.buttonStyle")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             <div className="space-y-2">
-              <Label>Style</Label>
-              <Select value={appearance.buttonStyle} onValueChange={(value) => setAppearance({ ...appearance, buttonStyle: value })}>
+              <Label>{t("appearance.style")}</Label>
+              <Select value={appearance.buttonStyle} onValueChange={(value) => handleAppearanceChange("buttonStyle", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rectangular">Rectangular</SelectItem>
-                  <SelectItem value="rounded">Rounded</SelectItem>
-                  <SelectItem value="pill">Pill</SelectItem>
+                  <SelectItem value="rectangular">{t("appearance.rectangular")}</SelectItem>
+                  <SelectItem value="rounded">{t("appearance.rounded")}</SelectItem>
+                  <SelectItem value="pill">{t("appearance.pill")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Background</Label>
+                <Label>{t("appearance.buttonBackground")}</Label>
                 <Input
                   type="color"
                   value={appearance.buttonBgColor}
-                  onChange={(e) => setAppearance({ ...appearance, buttonBgColor: e.target.value })}
+                  onChange={(e) => handleAppearanceChange("buttonBgColor", e.target.value)}
                   className="h-10"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Text Color</Label>
+                <Label>{t("appearance.buttonTextColor")}</Label>
                 <Input
                   type="color"
                   value={appearance.buttonTextColor}
-                  onChange={(e) => setAppearance({ ...appearance, buttonTextColor: e.target.value })}
+                  onChange={(e) => handleAppearanceChange("buttonTextColor", e.target.value)}
                   className="h-10"
                 />
               </div>
@@ -206,13 +205,13 @@ const AppearanceTab = () => {
 
         {/* Typography */}
         <Card>
-          <CardHeader>
-            <CardTitle>Typography</CardTitle>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">{t("appearance.typography")}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4 px-4 sm:px-6">
             <div className="space-y-2">
-              <Label>Font Family</Label>
-              <Select value={appearance.fontFamily} onValueChange={(value) => setAppearance({ ...appearance, fontFamily: value })}>
+              <Label>{t("appearance.fontFamily")}</Label>
+              <Select value={appearance.fontFamily} onValueChange={(value) => handleAppearanceChange("fontFamily", value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -224,11 +223,11 @@ const AppearanceTab = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Text Color</Label>
+              <Label>{t("appearance.textColor")}</Label>
               <Input
                 type="color"
                 value={appearance.textColor}
-                onChange={(e) => setAppearance({ ...appearance, textColor: e.target.value })}
+                onChange={(e) => handleAppearanceChange("textColor", e.target.value)}
                 className="h-10"
               />
             </div>
@@ -237,7 +236,7 @@ const AppearanceTab = () => {
       </div>
 
       {/* Preview Panel */}
-      <div className="lg:sticky lg:top-24 h-fit">
+      <div className="lg:sticky lg:top-24 h-fit order-first lg:order-last">
         <PhonePreview appearance={appearance} />
       </div>
     </div>

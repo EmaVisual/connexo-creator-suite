@@ -6,12 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Footer } from "@/components/Footer";
 import logoFull from "@/assets/logo-full.png";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,8 +29,8 @@ const Auth = () => {
     // Simulated signup
     setTimeout(() => {
       toast({
-        title: "Account created!",
-        description: `Welcome to Connexo, ${username}!`,
+        title: t("auth.accountCreated"),
+        description: t("auth.welcomeMessage").replace("{username}", username as string),
       });
       setIsLoading(false);
       navigate("/dashboard");
@@ -40,8 +44,8 @@ const Auth = () => {
     // Simulated login
     setTimeout(() => {
       toast({
-        title: "Welcome back!",
-        description: "Successfully logged in.",
+        title: t("auth.welcomeBackMessage"),
+        description: t("auth.successLogin"),
       });
       setIsLoading(false);
       navigate("/dashboard");
@@ -49,28 +53,29 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4">
       <div className="w-full max-w-md">
-        <div className="flex justify-center mb-8">
-          <img src={logoFull} alt="Connexo" className="h-12" />
+        <div className="flex justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <img src={logoFull} alt="Connexo" className="h-10 sm:h-12" />
+          <LanguageSelector />
         </div>
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="login">{t("auth.login")}</TabsTrigger>
+            <TabsTrigger value="signup">{t("auth.signup")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login">
             <Card>
               <CardHeader>
-                <CardTitle>Welcome back</CardTitle>
-                <CardDescription>Enter your credentials to access your account</CardDescription>
+                <CardTitle>{t("auth.welcomeBack")}</CardTitle>
+                <CardDescription>{t("auth.welcomeDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-email">{t("auth.email")}</Label>
                     <Input
                       id="login-email"
                       name="email"
@@ -80,7 +85,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="login-password">Password</Label>
+                    <Label htmlFor="login-password">{t("auth.password")}</Label>
                     <Input
                       id="login-password"
                       name="password"
@@ -90,7 +95,7 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Logging in..." : "Log in"}
+                    {isLoading ? t("auth.loggingIn") : t("auth.logIn")}
                   </Button>
                 </form>
               </CardContent>
@@ -100,13 +105,13 @@ const Auth = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Create your account</CardTitle>
-                <CardDescription>Get started with your free Connexo profile</CardDescription>
+                <CardTitle>{t("auth.createAccount")}</CardTitle>
+                <CardDescription>{t("auth.createAccountDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-username">Username</Label>
+                    <Label htmlFor="signup-username">{t("auth.username")}</Label>
                     <Input
                       id="signup-username"
                       name="username"
@@ -116,7 +121,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">{t("auth.email")}</Label>
                     <Input
                       id="signup-email"
                       name="email"
@@ -126,7 +131,7 @@ const Auth = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">{t("auth.password")}</Label>
                     <Input
                       id="signup-password"
                       name="password"
@@ -136,7 +141,7 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create account"}
+                    {isLoading ? t("auth.creatingAccount") : t("auth.createAccountButton")}
                   </Button>
                 </form>
               </CardContent>
@@ -144,6 +149,8 @@ const Auth = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Footer />
     </div>
   );
 };
