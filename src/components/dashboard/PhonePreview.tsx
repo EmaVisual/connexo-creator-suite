@@ -5,6 +5,8 @@ interface PhonePreviewProps {
     profileImage: string;
     coverImage: string;
     title: string;
+    role: string;
+    company: string;
     bio: string;
     bgType: string;
     bgColor: string;
@@ -48,13 +50,23 @@ const PhonePreview = ({ appearance }: PhonePreviewProps) => {
           <div className="p-6 space-y-6">
             {/* Cover Image */}
             {appearance.coverImage && (
-              <div className="w-full h-32 rounded-lg overflow-hidden">
+              <div className="w-full h-32 rounded-lg overflow-hidden relative">
                 <img src={appearance.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                {/* Profile Image Overlay */}
+                {appearance.profileImage && (
+                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
+                    <img
+                      src={appearance.profileImage}
+                      alt="Profile"
+                      className="w-20 h-20 rounded-full border-4 border-white shadow-lg object-cover"
+                    />
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Profile Image */}
-            {appearance.profileImage && (
+            {/* Profile Image (if no cover) */}
+            {!appearance.coverImage && appearance.profileImage && (
               <div className="flex justify-center">
                 <img
                   src={appearance.profileImage}
@@ -64,14 +76,30 @@ const PhonePreview = ({ appearance }: PhonePreviewProps) => {
               </div>
             )}
 
-            {/* Title & Bio */}
+            {/* Title & Info */}
             <div className="text-center space-y-2">
               <h2
-                className="text-2xl font-bold"
+                className="text-xl font-bold"
                 style={{ color: appearance.textColor }}
               >
                 {appearance.title}
               </h2>
+              {appearance.role && (
+                <p
+                  className="text-base font-medium opacity-90"
+                  style={{ color: appearance.textColor }}
+                >
+                  {appearance.role}
+                </p>
+              )}
+              {appearance.company && (
+                <p
+                  className="text-sm opacity-75"
+                  style={{ color: appearance.textColor }}
+                >
+                  {appearance.company}
+                </p>
+              )}
               <p
                 className="text-sm opacity-80"
                 style={{ color: appearance.textColor }}

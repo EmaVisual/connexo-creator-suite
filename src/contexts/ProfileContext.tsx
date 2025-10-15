@@ -18,6 +18,8 @@ export interface AppearanceData {
   profileImage: string;
   coverImage: string;
   title: string;
+  role: string;
+  company: string;
   bio: string;
   bgType: string;
   bgColor: string;
@@ -60,6 +62,8 @@ const defaultProfile: ProfileData = {
     profileImage: "",
     coverImage: "",
     title: "Your Name",
+    role: "",
+    company: "",
     bio: "Creative professional and digital enthusiast",
     bgType: "color",
     bgColor: "#210900",

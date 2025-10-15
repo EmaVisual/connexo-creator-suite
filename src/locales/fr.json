@@ -82,6 +82,8 @@
     "coverImage": "Image de Couverture",
     "upload": "Télécharger",
     "titleLabel": "Titre",
+    "role": "Rôle",
+    "company": "Entreprise",
     "bio": "Biographie",
     "background": "Arrière-plan",
     "backgroundType": "Type",

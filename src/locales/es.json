@@ -82,6 +82,8 @@
     "coverImage": "Imagen de Portada",
     "upload": "Subir",
     "titleLabel": "Título",
+    "role": "Cargo",
+    "company": "Empresa",
     "bio": "Biografía",
     "background": "Fondo",
     "backgroundType": "Tipo",

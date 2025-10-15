@@ -82,6 +82,8 @@
     "coverImage": "Immagine di Copertina",
     "upload": "Carica",
     "titleLabel": "Titolo",
+    "role": "Ruolo",
+    "company": "Azienda",
     "bio": "Biografia",
     "background": "Sfondo",
     "backgroundType": "Tipo",

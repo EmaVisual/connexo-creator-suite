@@ -82,6 +82,8 @@
     "coverImage": "Cover Image",
     "upload": "Upload",
     "titleLabel": "Title",
+    "role": "Role",
+    "company": "Company",
     "bio": "Bio",
     "background": "Background",
     "backgroundType": "Type",

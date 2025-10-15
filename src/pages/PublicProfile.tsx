@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useProfile } from "@/contexts/ProfileContext";
-import { ExternalLink, Mail, Phone, MapPin, ArrowLeft } from "lucide-react";
+import { ExternalLink, Mail, Phone, MapPin, ArrowLeft, Save, Share } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -51,6 +51,51 @@ const PublicProfile = () => {
           backgroundPosition: "center",
         };
 
+  const downloadVCard = () => {
+    const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${appearance.title}
+EMAIL:${contactData.email || ''}
+TEL:${contactData.phone || ''}
+ADR:;;${contactData.location || ''};;;;
+NOTE:${appearance.bio || ''}
+END:VCARD`;
+
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${appearance.title.replace(/\s+/g, '_')}_contact.vcf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const shareProfile = async () => {
+    const currentUrl = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${appearance.title} - ${appearance.bio}`,
+          text: `Conoce el perfil de ${appearance.title}`,
+          url: currentUrl,
+        });
+      } catch (err) {
+        // Si el usuario cancela el compartir, no hacemos nada
+        console.log('Compartir cancelado');
+      }
+    } else {
+      // Fallback: copiar al portapapeles
+      try {
+        await navigator.clipboard.writeText(currentUrl);
+        // Aquí podrías mostrar una notificación de que se copió el enlace
+        console.log('Enlace copiado al portapapeles');
+      } catch (err) {
+        console.error('Error al copiar el enlace:', err);
+      }
+    }
+  };
+
   return (
     <div
       className="min-h-screen w-full flex flex-col"
@@ -86,13 +131,13 @@ const PublicProfile = () => {
               )}
 
               {/* Profile Image Overlay */}
-              <div className="absolute -bottom-8 sm:-bottom-10 md:-bottom-12 left-1/2 transform -translate-x-1/2">
+              <div className="absolute -bottom-12 sm:-bottom-16 md:-bottom-20 left-1/2 transform -translate-x-1/2">
                 <div className="relative">
                   {appearance.profileImage && (
                     <img
                       src={appearance.profileImage}
                       alt="Profile"
-                      className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                      className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-lg"
                     />
                   )}
                 </div>
@@ -111,6 +156,28 @@ const PublicProfile = () => {
                 >
                   {appearance.title}
                 </h1>
+                {appearance.role && (
+                  <p
+                    className="text-lg sm:text-xl md:text-2xl font-medium opacity-90"
+                    style={{
+                      color: appearance.textColor,
+                      fontFamily: appearance.fontFamily,
+                    }}
+                  >
+                    {appearance.role}
+                  </p>
+                )}
+                {appearance.company && (
+                  <p
+                    className="text-base sm:text-lg md:text-xl opacity-75"
+                    style={{
+                      color: appearance.textColor,
+                      fontFamily: appearance.fontFamily,
+                    }}
+                  >
+                    {appearance.company}
+                  </p>
+                )}
                 <p
                   className="text-sm sm:text-base md:text-lg max-w-md mx-auto px-4"
                   style={{
@@ -160,6 +227,30 @@ const PublicProfile = () => {
                 )}
               </div>
             )}
+
+            {/* Action Buttons */}
+            <div className="flex justify-center gap-4 px-4 sm:px-0">
+              <Button
+                onClick={downloadVCard}
+                size="icon"
+                variant="outline"
+                className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20"
+                style={{ color: appearance.textColor }}
+                title="Guardar Contacto"
+              >
+                <Save className="h-5 w-5" />
+              </Button>
+              <Button
+                onClick={shareProfile}
+                size="icon"
+                variant="outline"
+                className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20"
+                style={{ color: appearance.textColor }}
+                title="Compartir Perfil"
+              >
+                <Share className="h-5 w-5" />
+              </Button>
+            </div>
 
             {/* Links */}
             <div className="space-y-3 sm:space-y-4 px-4 sm:px-6 md:px-8">

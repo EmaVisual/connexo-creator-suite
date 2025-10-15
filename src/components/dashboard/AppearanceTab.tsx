@@ -115,6 +115,26 @@ const AppearanceTab = () => {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="role">{t("appearance.role")}</Label>
+              <Input
+                id="role"
+                value={appearance.role}
+                onChange={(e) => handleAppearanceChange("role", e.target.value)}
+                placeholder="Ej: Diseñador UX/UI"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="company">{t("appearance.company")}</Label>
+              <Input
+                id="company"
+                value={appearance.company}
+                onChange={(e) => handleAppearanceChange("company", e.target.value)}
+                placeholder="Ej: Empresa XYZ"
+              />
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="bio">{t("appearance.bio")}</Label>
               <Textarea
                 id="bio"
