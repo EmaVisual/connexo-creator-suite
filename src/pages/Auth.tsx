@@ -80,99 +80,108 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4">
-      <div className="w-full max-w-md">
-        <div className="flex justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <img src={logoFull} alt="Connexo" className="h-10 sm:h-12" />
-          <LanguageSelector />
-        </div>
-
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 h-auto">
-            <TabsTrigger value="login" className="text-sm sm:text-base py-2">{t("auth.login")}</TabsTrigger>
-            <TabsTrigger value="signup" className="text-sm sm:text-base py-2">{t("auth.signup")}</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="login">
-            <Card>
-              <CardHeader className="px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl">{t("auth.welcomeBack")}</CardTitle>
-                <CardDescription className="text-sm">{t("auth.welcomeDescription")}</CardDescription>
-              </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="login-email" className="text-sm">{t("auth.email")}</Label>
-                    <Input
-                      id="login-email"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      required
-                      className="text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="login-password" className="text-sm">{t("auth.password")}</Label>
-                    <Input
-                      id="login-password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      required
-                      className="text-sm sm:text-base"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full text-sm sm:text-base" disabled={isLoading}>
-                    {isLoading ? t("auth.loggingIn") : t("auth.logIn")}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="signup">
-            <Card>
-              <CardHeader className="px-4 sm:px-6">
-                <CardTitle className="text-lg sm:text-xl">{t("auth.createAccount")}</CardTitle>
-                <CardDescription className="text-sm">{t("auth.createAccountDescription")}</CardDescription>
-              </CardHeader>
-              <CardContent className="px-4 sm:px-6">
-                <form onSubmit={handleSignUp} className="space-y-3 sm:space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-sm">{t("auth.email")}</Label>
-                    <Input
-                      id="signup-email"
-                      name="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      required
-                      className="text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-sm">{t("auth.password")}</Label>
-                    <Input
-                      id="signup-password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      className="text-sm sm:text-base"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full text-sm sm:text-base" disabled={isLoading}>
-                    {isLoading ? t("auth.creatingAccount") : t("auth.createAccountButton")}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+    <div className="min-h-screen flex flex-col bg-background">
+      {/* Header with Language Selector */}
+      <div className="w-full flex justify-end p-3 sm:p-4">
+        <LanguageSelector />
       </div>
 
-      <Footer />
+      {/* Main Content - Centered */}
+      <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
+        <div className="w-full max-w-md">
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 h-auto">
+              <TabsTrigger value="login" className="text-sm sm:text-base py-2">{t("auth.login")}</TabsTrigger>
+              <TabsTrigger value="signup" className="text-sm sm:text-base py-2">{t("auth.signup")}</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login">
+              <Card>
+                <CardHeader className="px-4 sm:px-6">
+                  <CardTitle className="text-lg sm:text-xl">{t("auth.welcomeBack")}</CardTitle>
+                  <CardDescription className="text-sm">{t("auth.welcomeDescription")}</CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 sm:px-6">
+                  <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="login-email" className="text-sm">{t("auth.email")}</Label>
+                      <Input
+                        id="login-email"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        required
+                        className="text-sm sm:text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password" className="text-sm">{t("auth.password")}</Label>
+                      <Input
+                        id="login-password"
+                        name="password"
+                        type="password"
+                        placeholder="••••••••"
+                        required
+                        className="text-sm sm:text-base"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full text-sm sm:text-base" disabled={isLoading}>
+                      {isLoading ? t("auth.loggingIn") : t("auth.logIn")}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="signup">
+              <Card>
+                <CardHeader className="px-4 sm:px-6">
+                  <CardTitle className="text-lg sm:text-xl">{t("auth.createAccount")}</CardTitle>
+                  <CardDescription className="text-sm">{t("auth.createAccountDescription")}</CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 sm:px-6">
+                  <form onSubmit={handleSignUp} className="space-y-3 sm:space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email" className="text-sm">{t("auth.email")}</Label>
+                      <Input
+                        id="signup-email"
+                        name="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        required
+                        className="text-sm sm:text-base"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password" className="text-sm">{t("auth.password")}</Label>
+                      <Input
+                        id="signup-password"
+                        name="password"
+                        type="password"
+                        placeholder="••••••••"
+                        required
+                        minLength={6}
+                        className="text-sm sm:text-base"
+                      />
+                    </div>
+                    <Button type="submit" className="w-full text-sm sm:text-base" disabled={isLoading}>
+                      {isLoading ? t("auth.creatingAccount") : t("auth.createAccountButton")}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+
+      {/* Footer with Logo */}
+      <div className="w-full pb-4 sm:pb-6">
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
+          <img src={logoFull} alt="Connexo" className="h-8 sm:h-10 opacity-80" />
+          <Footer />
+        </div>
+      </div>
     </div>
   );
 };
