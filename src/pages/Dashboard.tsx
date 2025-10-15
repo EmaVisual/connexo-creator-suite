@@ -5,6 +5,7 @@ import { LogOut, Link2, Palette, BarChart3, User, ExternalLink } from "lucide-re
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useProfile } from "@/contexts/ProfileContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import logoIcon from "@/assets/logo-icon.png";
 import LinksTab from "@/components/dashboard/LinksTab";
@@ -17,8 +18,10 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("links");
   const { t } = useLanguage();
   const { profile } = useProfile();
+  const { signOut } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     navigate("/auth");
   };
 
