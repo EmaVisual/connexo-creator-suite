@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { useProfile } from "@/contexts/ProfileContext";
 import { ExternalLink, Mail, Phone, MapPin, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
 import * as LucideIcons from "lucide-react";
 
 const PublicProfile = () => {
@@ -10,9 +12,17 @@ const PublicProfile = () => {
   const { appearance, links, contactData } = profile;
   const navigate = useNavigate();
   const { username } = useParams();
+  const { t } = useLanguage();
 
   // Check if user is viewing their own profile (has session)
   const isOwnProfile = username === profile.username;
+
+  // Update page title dynamically
+  useEffect(() => {
+    const { title, bio } = appearance;
+    const pageTitle = bio ? `${title} - ${bio}` : title;
+    document.title = pageTitle;
+  }, [appearance.title, appearance.bio]);
 
   const getButtonRadius = () => {
     switch (appearance.buttonStyle) {
@@ -183,21 +193,13 @@ const PublicProfile = () => {
                   </a>
                 ))}
             </div>
-
-            {/* Footer */}
-            <div className="text-center py-6 sm:py-8">
-              <p
-                className="text-xs sm:text-sm opacity-70"
-                style={{ color: appearance.textColor }}
-              >
-                Powered by Connexo
-              </p>
-            </div>
           </div>
         </div>
 
-        <Footer />
       </div>
+
+      {/* Footer at the bottom of the page */}
+      <Footer />
     </div>
   );
 };

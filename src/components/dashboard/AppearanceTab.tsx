@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { Upload, Save } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useProfile } from "@/contexts/ProfileContext";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,22 @@ const AppearanceTab = () => {
   const { profile, updateAppearance } = useProfile();
   const { toast } = useToast();
   const appearance = profile.appearance;
+
+  useEffect(() => {
+    // Auto-save appearance when it changes
+    const timer = setTimeout(() => {
+      updateAppearance(appearance);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [appearance]);
+
+  const saveChanges = () => {
+    updateAppearance(appearance);
+    toast({
+      title: t("common.success"),
+      description: "Appearance changes saved successfully",
+    });
+  };
 
   const handleImageUpload = (field: "profileImage" | "coverImage", e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -238,6 +255,14 @@ const AppearanceTab = () => {
       {/* Preview Panel */}
       <div className="lg:sticky lg:top-24 h-fit order-first lg:order-last">
         <PhonePreview appearance={appearance} />
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="lg:col-span-2 flex justify-center pt-6">
+        <Button onClick={saveChanges} className="gap-2">
+          <Save className="h-4 w-4" />
+          {t("common.saveChanges")}
+        </Button>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, GripVertical, Trash2 } from "lucide-react";
+import { Plus, GripVertical, Trash2, Save } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useProfile, Link } from "@/contexts/ProfileContext";
@@ -82,8 +82,25 @@ END:VCARD`;
     a.click();
   };
 
+  const saveChanges = () => {
+    updateLinks(profile.links);
+    updateContactData(profile.contactData);
+    toast({
+      title: t("common.success"),
+      description: "Changes saved successfully",
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+      {/* Save Button at the top */}
+      <div className="flex justify-end">
+        <Button onClick={saveChanges} className="gap-2">
+          <Save className="h-4 w-4" />
+          {t("common.saveChanges")}
+        </Button>
+      </div>
+
       {/* Contact Data Section */}
       <Card>
         <CardHeader className="px-4 sm:px-6">
@@ -184,6 +201,14 @@ END:VCARD`;
           </Button>
         </CardContent>
       </Card>
+
+      {/* Save Changes Button */}
+      <div className="flex justify-center pt-4">
+        <Button onClick={saveChanges} variant="outline" className="gap-2">
+          <Save className="h-4 w-4" />
+          {t("common.saveChanges")}
+        </Button>
+      </div>
     </div>
   );
 };

@@ -13,7 +13,7 @@ export const Footer = ({ className = "" }: FooterProps) => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <img src={logoIcon} alt="Connexo" className="h-4 w-4" />
-          <span>Desarrollado por Connexo</span>
+          <span>{t("common.poweredBy")} Connexo</span>
         </div>
       </div>
     </footer>
